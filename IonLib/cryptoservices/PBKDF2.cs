@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace IonLib.cryptoservices
 {
@@ -9,7 +8,7 @@ namespace IonLib.cryptoservices
 
 		public static byte[] Encrypt(string password, byte[] salt)
 		{
-			Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, salt);
+			Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, salt, Iterations);
 			return pbkdf2.GetBytes(16);
 		}
 
