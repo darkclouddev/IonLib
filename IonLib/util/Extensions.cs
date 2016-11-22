@@ -45,5 +45,21 @@ namespace IonLib.util
 
 			return BitConverter.ToUInt32(buffer, 0);
 		}
+
+		static DateTime startDate = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+		public static long GetCurrentTimestamp()
+		{
+			return (long)Math.Floor((DateTime.Now - startDate).TotalSeconds);
+		}
+		
+		public static DateTime ConvertFromTimestamp(this ulong timestamp)
+		{
+			return startDate.AddSeconds(timestamp);
+		}
+
+		public static int ConvertToTimestamp(this DateTime date)
+		{
+			return (int)Math.Floor((date - startDate).TotalSeconds);
+		}
 	}
 }

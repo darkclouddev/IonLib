@@ -45,6 +45,7 @@
     <Compile Include="cryptoservices\Generator.cs" />
     <Compile Include="cryptoservices\HashPassword.cs" />
     <Compile Include="cryptoservices\MD5Operation.cs" />
+    <Compile Include="cryptoservices\PBKDF2.cs" />
     <Compile Include="cryptoservices\util\BigInteger.cs" />
     <Compile Include="cryptoservices\util\StrongNumberProvider.cs" />
     <Compile Include="network\ByteQueue.cs" />

@@ -11,6 +11,7 @@ namespace IonLib.network
 	/// </summary>
 	public static class Protocol
 	{
+		public const uint Version = 1;
 		public const string EmptyIV = "0000000000000000";
 
 		/* Process description:
@@ -49,7 +50,11 @@ namespace IonLib.network
 			finalBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(packetType), finalBytes); //+type
 			finalBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(CRC32Operation.ComputeCRC32(finalBytes)), finalBytes); //+crc
 			finalBytes = AES256.Encrypt(finalBytes, key, iv); //+enc
+
+			#if DEBUG
 			Console.WriteLine($"Encrypted data: {BitConverter.ToString(finalBytes)}");
+			#endif
+
 			finalBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(finalBytes.Length), finalBytes);  //+encSize
 			finalBytes = InsertBytesAtIndex(0, iv, finalBytes); //+iv
 
