@@ -82,15 +82,8 @@ namespace IonLibTests
 		public void GeneratorIV()
 		{
 			string num1 = Generator.NextIVForAES();
-			string num2 = Generator.NextIVForAES();
 
-			while (num2 == num1) //there is a small chance of collision due to small size of IV
-			{
-				num2 = Generator.NextIVForAES();
-			}
-
-			Console.WriteLine($"{num1} | {num2}");
-			Assert.IsTrue(num2 != num1);
+			Assert.IsTrue(num1.Length == 16);
 		}
 	}
 }
