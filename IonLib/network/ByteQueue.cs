@@ -10,7 +10,7 @@ namespace IonLib.network
 		public int Head { get; private set; }
 		public int Tail { get; private set; }
 
-		public int Size { get { return Length; } }
+		public int Size => Length;
 
 		public ByteQueue()
 		{

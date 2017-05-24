@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IonLib</RootNamespace>
     <AssemblyName>IonLib</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,6 +50,7 @@
     <Compile Include="cryptoservices\PBKDF2.cs" />
     <Compile Include="cryptoservices\util\BigInteger.cs" />
     <Compile Include="cryptoservices\util\StrongNumberProvider.cs" />
+    <Compile Include="io\AsyncIO.cs" />
     <Compile Include="network\ByteQueue.cs" />
     <Compile Include="network\NetworkExtensions.cs" />
     <Compile Include="network\Protocol.cs" />
