@@ -13,7 +13,7 @@
 		public static readonly IonVector Left = new IonVector(-1, 0, 0);
 		public static readonly IonVector Right = new IonVector(1, 0, 0);
 
-		const string ToStringFormat = "IonVector({0} {1} {2})";
+		static readonly string ToStringFormat = nameof(IonVector) + "({0} {1} {2})";
 
 		public IonVector(int x, int y, int z = 0)
 		{
