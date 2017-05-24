@@ -1,7 +1,7 @@
 # VERY USEFUL README #
 
 ### What is this repository for? ###
-* Small .NET library with RFC-complied cryptographic classes and a bit of random useful stuff (syntax sugar inclusive).
+* Small .NET 4.6 library with RFC-complied cryptographic classes and a bit of random useful stuff (syntax sugar inclusive).
 
 ### Setup ###
 * Clone this repo
