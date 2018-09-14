@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace IonLib.util
+namespace IonLib.Util
 {
 	public static class Extensions
 	{
@@ -20,28 +20,32 @@ namespace IonLib.util
 
 		public static int ToInt32(byte[] buffer)
 		{
-			if (buffer == null) throw new ArgumentNullException("Buffer cannot be null!");
+			if (buffer is null)
+				throw new ArgumentNullException("Buffer cannot be null!");
 
 			return BitConverter.ToInt32(buffer, 0);
 		}
 
 		public static string ToStringIV(byte[] buffer)
 		{
-			if (buffer == null) throw new ArgumentNullException("Buffer cannot be null!");
+			if (buffer is null)
+				throw new ArgumentNullException("Buffer cannot be null!");
 
 			return Encoding.ASCII.GetString(buffer);
 		}
 
 		public static string ToString(byte[] buffer)
 		{
-			if (buffer == null) throw new ArgumentNullException("Buffer cannot be null!");
+			if (buffer is null)
+				throw new ArgumentNullException("Buffer cannot be null!");
 
 			return Encoding.UTF8.GetString(buffer);
 		}
 
 		public static uint ToUInt32(byte[] buffer)
 		{
-			if (buffer == null) throw new ArgumentNullException("Buffer cannot be null!");
+			if (buffer is null)
+				throw new ArgumentNullException("Buffer cannot be null!");
 
 			return BitConverter.ToUInt32(buffer, 0);
 		}

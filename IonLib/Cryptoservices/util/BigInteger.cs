@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace IonLib.cryptoservices.util
+namespace IonLib.Cryptoservices.Util
 {
 	internal class BigInteger : IDisposable
 	{
@@ -59,6 +59,7 @@ namespace IonLib.cryptoservices.util
 			// the length of the long datatype
 
 			DataLength = 0;
+
 			while (value != 0 && DataLength < maxLength)
 			{
 				data[DataLength] = (uint)(value & 0xFFFFFFFF);
@@ -68,14 +69,17 @@ namespace IonLib.cryptoservices.util
 
 			if (tempVal > 0) // overflow check for +ve value
 			{
-				if (value != 0 || (data[maxLength - 1] & 0x80000000) != 0) throw (new ArithmeticException("Positive overflow in constructor."));
+				if (value != 0 || (data[maxLength - 1] & 0x80000000) != 0)
+					throw (new ArithmeticException("Positive overflow in constructor."));
 			}
 			else if (tempVal < 0) // underflow check for -ve value
 			{
-				if (value != -1 || (data[DataLength - 1] & 0x80000000) == 0) throw (new ArithmeticException("Negative underflow in constructor."));
+				if (value != -1 || (data[DataLength - 1] & 0x80000000) == 0)
+					throw (new ArithmeticException("Negative underflow in constructor."));
 			}
 
-			if (DataLength == 0) DataLength = 1;
+			if (DataLength == 0)
+				DataLength = 1;
 		}
 
 		//***********************************************************************
@@ -89,6 +93,7 @@ namespace IonLib.cryptoservices.util
 			// the length of the ulong datatype
 
 			DataLength = 0;
+
 			while (value != 0 && DataLength < maxLength)
 			{
 				data[DataLength] = (uint)(value & 0xFFFFFFFF);
@@ -96,9 +101,11 @@ namespace IonLib.cryptoservices.util
 				DataLength++;
 			}
 
-			if (value != 0 || (data[maxLength - 1] & 0x80000000) != 0) throw (new ArithmeticException("Positive overflow in constructor."));
+			if (value != 0 || (data[maxLength - 1] & 0x80000000) != 0)
+				throw (new ArithmeticException("Positive overflow in constructor."));
 
-			if (DataLength == 0) DataLength = 1;
+			if (DataLength == 0)
+				DataLength = 1;
 		}
 
 		//***********************************************************************
@@ -110,7 +117,8 @@ namespace IonLib.cryptoservices.util
 
 			DataLength = bi.DataLength;
 
-			for (int i = 0; i < DataLength; i++) data[i] = bi.data[i];
+			for (int i = 0; i < DataLength; i++)
+				data[i] = bi.data[i];
 		}
 
 		//***********************************************************************
@@ -139,12 +147,14 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public BigInteger(string value, int radix)
 		{
-			BigInteger multiplier = new BigInteger(1);
-			BigInteger result = new BigInteger();
+			var multiplier = new BigInteger(1);
+			var result = new BigInteger();
+
 			value = (value.ToUpper()).Trim();
 			int limit = 0;
 
-			if (value[0] == '-') limit = 1;
+			if (value[0] == '-')
+				limit = 1;
 
 			for (int i = value.Length - 1; i >= limit; i--)
 			{
@@ -158,31 +168,37 @@ namespace IonLib.cryptoservices.util
 				{
 					posVal = (posVal - 'A') + 10;
 				}
-				else posVal = 9999999;       // arbitrary large
+				else posVal = 9999999; // arbitrary large
 
-
-				if (posVal >= radix) throw (new ArithmeticException("Invalid string in constructor."));
+				if (posVal >= radix)
+					throw (new ArithmeticException("Invalid string in constructor."));
 				else
 				{
-					if (value[0] == '-') posVal = -posVal;
+					if (value[0] == '-')
+						posVal = -posVal;
 
 					result = result + (multiplier * posVal);
 
-					if ((i - 1) >= limit) multiplier = multiplier * radix;
+					if ((i - 1) >= limit)
+						multiplier = multiplier * radix;
 				}
 			}
 
 			if (value[0] == '-') // negative values
 			{
-				if ((result.data[maxLength - 1] & 0x80000000) == 0) throw (new ArithmeticException("Negative underflow in constructor."));
+				if ((result.data[maxLength - 1] & 0x80000000) == 0)
+					throw (new ArithmeticException("Negative underflow in constructor."));
 			}
 			else // positive values
 			{
-				if ((result.data[maxLength - 1] & 0x80000000) != 0) throw (new ArithmeticException("Positive overflow in constructor."));
+				if ((result.data[maxLength - 1] & 0x80000000) != 0)
+					throw (new ArithmeticException("Positive overflow in constructor."));
 			}
 
 			data = new uint[maxLength];
-			for (int i = 0; i < result.DataLength; i++) data[i] = result.data[i];
+
+			for (int i = 0; i < result.DataLength; i++)
+				data[i] = result.data[i];
 
 			DataLength = result.DataLength;
 		}
@@ -208,10 +224,12 @@ namespace IonLib.cryptoservices.util
 			DataLength = inData.Count >> 2;
 
 			int leftOver = inData.Count & 0x3;
-			if (leftOver != 0) DataLength++; //length not multiples of 4
 
+			if (leftOver != 0)
+				DataLength++; //length not multiples of 4
 
-			if (DataLength > maxLength) throw (new ArithmeticException("Byte overflow in constructor."));
+			if (DataLength > maxLength)
+				throw (new ArithmeticException("Byte overflow in constructor."));
 
 			data = new uint[maxLength];
 
@@ -223,16 +241,17 @@ namespace IonLib.cryptoservices.util
 			switch (leftOver)
 			{
 				case 1:
-				data[DataLength - 1] = inData[0];
-				break;
-				case 2:
-				data[DataLength - 1] = (uint)((inData[0] << 8) + inData[1]);
-				break;
-				case 3:
-				data[DataLength - 1] = (uint)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
-				break;
-			}
+					data[DataLength - 1] = inData[0];
+					break;
 
+				case 2:
+					data[DataLength - 1] = (uint)((inData[0] << 8) + inData[1]);
+					break;
+
+				case 3:
+					data[DataLength - 1] = (uint)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
+					break;
+			}
 
 			while (DataLength > 1 && data[DataLength - 1] == 0)
 			{
@@ -241,7 +260,6 @@ namespace IonLib.cryptoservices.util
 
 			//Console.WriteLine("Len = " + dataLength);
 		}
-
 
 		//***********************************************************************
 		// Constructor (Default value provided by an array of bytes of the
@@ -253,10 +271,12 @@ namespace IonLib.cryptoservices.util
 			DataLength = inLen >> 2;
 
 			int leftOver = inLen & 0x3;
-			if (leftOver != 0) DataLength++; // length not multiples of 4
 
-			if (DataLength > maxLength || inLen > inData.Count) throw (new ArithmeticException("Byte overflow in constructor."));
+			if (leftOver != 0)
+				DataLength++; // length not multiples of 4
 
+			if (DataLength > maxLength || inLen > inData.Count)
+				throw (new ArithmeticException("Byte overflow in constructor."));
 
 			data = new uint[maxLength];
 
@@ -268,26 +288,28 @@ namespace IonLib.cryptoservices.util
 			switch (leftOver)
 			{
 				case 1:
-				data[DataLength - 1] = (uint)inData[0];
-				break;
+					data[DataLength - 1] = (uint)inData[0];
+					break;
+
 				case 2:
-				data[DataLength - 1] = (uint)((inData[0] << 8) + inData[1]);
-				break;
+					data[DataLength - 1] = (uint)((inData[0] << 8) + inData[1]);
+					break;
+
 				case 3:
-				data[DataLength - 1] = (uint)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
-				break;
+					data[DataLength - 1] = (uint)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
+					break;
 			}
 
-
-			if (DataLength == 0) DataLength = 1;
+			if (DataLength == 0)
+				DataLength = 1;
 
 			while (DataLength > 1 && data[DataLength - 1] == 0)
 			{
 				DataLength--;
 			}
+
 			//Console.WriteLine("Len = " + dataLength);
 		}
-
 
 		//***********************************************************************
 		// Constructor (Default value provided by an array of unsigned integers)
@@ -296,7 +318,8 @@ namespace IonLib.cryptoservices.util
 		{
 			DataLength = inData.Count;
 
-			if (DataLength > maxLength) throw (new ArithmeticException("Byte overflow in constructor."));
+			if (DataLength > maxLength)
+				throw (new ArithmeticException("Byte overflow in constructor."));
 
 			data = new uint[maxLength];
 
@@ -309,6 +332,7 @@ namespace IonLib.cryptoservices.util
 			{
 				DataLength--;
 			}
+
 			//Console.WriteLine("Len = " + dataLength);
 		}
 
@@ -326,9 +350,15 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator +(BigInteger bi1, BigInteger bi2)
 		{
-			BigInteger result = new BigInteger { DataLength = (bi1.DataLength > bi2.DataLength) ? bi1.DataLength : bi2.DataLength };
+			var result = new BigInteger
+			{
+				DataLength = (bi1.DataLength > bi2.DataLength)
+					? bi1.DataLength
+					: bi2.DataLength
+			};
 
 			long carry = 0;
+
 			for (int i = 0; i < result.DataLength; i++)
 			{
 				long sum = (long)bi1.data[i] + (long)bi2.data[i] + carry;
@@ -349,7 +379,9 @@ namespace IonLib.cryptoservices.util
 
 			// overflow check
 			int lastPos = maxLength - 1;
-			if ((bi1.data[lastPos] & 0x80000000) == (bi2.data[lastPos] & 0x80000000) && (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
+			
+			if ((bi1.data[lastPos] & 0x80000000) == (bi2.data[lastPos] & 0x80000000)
+				&& (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
 			{
 				throw (new ArithmeticException());
 			}
@@ -362,7 +394,7 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator ++(BigInteger bi1)
 		{
-			BigInteger result = new BigInteger(bi1);
+			var result = new BigInteger(bi1);
 
 			long val, carry = 1;
 			int index = 0;
@@ -378,10 +410,12 @@ namespace IonLib.cryptoservices.util
 				index++;
 			}
 
-			if (index > result.DataLength) result.DataLength = index;
+			if (index > result.DataLength)
+				result.DataLength = index;
 			else
 			{
-				while (result.DataLength > 1 && result.data[result.DataLength - 1] == 0)
+				while (result.DataLength > 1
+					&& result.data[result.DataLength - 1] == 0)
 				{
 					result.DataLength--;
 				}
@@ -393,7 +427,8 @@ namespace IonLib.cryptoservices.util
 			// overflow if initial value was +ve but ++ caused a sign
 			// change to negative.
 
-			if ((bi1.data[lastPos] & 0x80000000) == 0 && (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
+			if ((bi1.data[lastPos] & 0x80000000) == 0
+				&& (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
 			{
 				throw (new ArithmeticException("Overflow in ++."));
 			}
@@ -405,9 +440,15 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator -(BigInteger bi1, BigInteger bi2)
 		{
-			BigInteger result = new BigInteger { DataLength = (bi1.DataLength > bi2.DataLength) ? bi1.DataLength : bi2.DataLength };
+			var result = new BigInteger
+			{
+				DataLength = (bi1.DataLength > bi2.DataLength)
+					? bi1.DataLength
+					: bi2.DataLength
+			};
 
 			long carryIn = 0;
+
 			for (int i = 0; i < result.DataLength; i++)
 			{
 				var diff = bi1.data[i] - (long)bi2.data[i] - carryIn;
@@ -423,6 +464,7 @@ namespace IonLib.cryptoservices.util
 				{
 					result.data[i] = 0xFFFFFFFF;
 				}
+
 				result.DataLength = maxLength;
 			}
 
@@ -434,7 +476,9 @@ namespace IonLib.cryptoservices.util
 
 			// overflow check
 			int lastPos = maxLength - 1;
-			if ((bi1.data[lastPos] & 0x80000000) != (bi2.data[lastPos] & 0x80000000) && (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
+
+			if ((bi1.data[lastPos] & 0x80000000) != (bi2.data[lastPos] & 0x80000000)
+				&& (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
 			{
 				throw (new ArithmeticException());
 			}
@@ -447,7 +491,7 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator --(BigInteger bi1)
 		{
-			BigInteger result = new BigInteger(bi1);
+			var result = new BigInteger(bi1);
 
 			long val;
 			bool carryIn = true;
@@ -460,12 +504,14 @@ namespace IonLib.cryptoservices.util
 
 				result.data[index] = (uint)(val & 0xFFFFFFFF);
 
-				if (val >= 0) carryIn = false;
+				if (val >= 0)
+					carryIn = false;
 
 				index++;
 			}
 
-			if (index > result.DataLength) result.DataLength = index;
+			if (index > result.DataLength)
+				result.DataLength = index;
 
 			while (result.DataLength > 1 && result.data[result.DataLength - 1] == 0)
 			{
@@ -477,7 +523,8 @@ namespace IonLib.cryptoservices.util
 
 			// overflow if initial value was -ve but -- caused a sign
 			// change to positive.
-			if ((bi1.data[lastPos] & 0x80000000) != 0 && (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
+			if ((bi1.data[lastPos] & 0x80000000) != 0
+				&& (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
 			{
 				throw (new ArithmeticException("Underflow in --."));
 			}
@@ -507,16 +554,18 @@ namespace IonLib.cryptoservices.util
 			}
 			catch (Exception) { }
 
-			BigInteger result = new BigInteger();
+			var result = new BigInteger();
 
 			// multiply the absolute values
 			try
 			{
 				for (int i = 0; i < bi1.DataLength; i++)
 				{
-					if (bi1.data[i] == 0) continue;
+					if (bi1.data[i] == 0)
+						continue;
 
 					ulong mcarry = 0;
+
 					for (int j = 0, k = i; j < bi2.DataLength; j++, k++)
 					{
 						// k = i + j
@@ -526,7 +575,8 @@ namespace IonLib.cryptoservices.util
 						mcarry = (val >> 32);
 					}
 
-					if (mcarry != 0) result.data[i + bi2.DataLength] = (uint)mcarry;
+					if (mcarry != 0)
+						result.data[i + bi2.DataLength] = (uint)mcarry;
 				}
 			}
 			catch (Exception)
@@ -535,7 +585,9 @@ namespace IonLib.cryptoservices.util
 			}
 
 			result.DataLength = bi1.DataLength + bi2.DataLength;
-			if (result.DataLength > maxLength) result.DataLength = maxLength;
+
+			if (result.DataLength > maxLength)
+				result.DataLength = maxLength;
 
 			while (result.DataLength > 1 && result.data[result.DataLength - 1] == 0)
 			{
@@ -543,20 +595,27 @@ namespace IonLib.cryptoservices.util
 			}
 
 			// overflow check (result is -ve)
-			if ((result.data[lastPos] & 0x80000000) == 0) { return bi1Neg != bi2Neg ? -result : result; }
-			if (bi1Neg == bi2Neg || result.data[lastPos] != 0x80000000) { throw (new ArithmeticException("Multiplication overflow.")); }
+			if ((result.data[lastPos] & 0x80000000) == 0)
+				return bi1Neg != bi2Neg ? -result : result;
+
+			if (bi1Neg == bi2Neg || result.data[lastPos] != 0x80000000)
+				throw (new ArithmeticException("Multiplication overflow."));
 
 			// handle the special case where multiplication produces
 			// a max negative number in 2's complement.
-			if (result.DataLength == 1) return result;
+			if (result.DataLength == 1)
+				return result;
 
 			bool isMaxNeg = true;
+
 			for (int i = 0; i < result.DataLength - 1 && isMaxNeg; i++)
 			{
-				if (result.data[i] != 0) isMaxNeg = false;
+				if (result.data[i] != 0)
+					isMaxNeg = false;
 			}
 
-			if (isMaxNeg) return result;
+			if (isMaxNeg)
+				return result;
 
 			throw (new ArithmeticException("Multiplication overflow."));
 
@@ -568,14 +627,14 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator <<(BigInteger bi1, int shiftVal)
 		{
-			BigInteger result = new BigInteger(bi1);
+			var result = new BigInteger(bi1);
 			result.DataLength = ShiftLeft(result.data, shiftVal);
 
 			return result;
 		}
 
 		// least significant bits at lower part of buffer
-		private static int ShiftLeft(uint[] buffer, int shiftVal)
+		static int ShiftLeft(uint[] buffer, int shiftVal)
 		{
 			int shiftAmount = 32;
 			int bufLen = buffer.Length;
@@ -587,11 +646,13 @@ namespace IonLib.cryptoservices.util
 
 			for (int count = shiftVal; count > 0;)
 			{
-				if (count < shiftAmount) shiftAmount = count;
+				if (count < shiftAmount)
+					shiftAmount = count;
 
 				//Console.WriteLine("shiftAmount = {0}", shiftAmount);
 
 				ulong carry = 0;
+
 				for (int i = 0; i < bufLen; i++)
 				{
 					ulong val = ((ulong)buffer[i]) << shiftAmount;
@@ -609,8 +670,10 @@ namespace IonLib.cryptoservices.util
 						bufLen++;
 					}
 				}
+
 				count -= shiftAmount;
 			}
+
 			return bufLen;
 		}
 
@@ -622,7 +685,8 @@ namespace IonLib.cryptoservices.util
 			BigInteger result = new BigInteger(bi1);
 			result.DataLength = ShiftRight(result.data, shiftVal);
 
-			if ((bi1.data[maxLength - 1] & 0x80000000) == 0) return result;
+			if ((bi1.data[maxLength - 1] & 0x80000000) == 0)
+				return result;
 
 			for (int i = maxLength - 1; i >= result.DataLength; i--)
 			{
@@ -632,7 +696,8 @@ namespace IonLib.cryptoservices.util
 			uint mask = 0x80000000;
 			for (int i = 0; i < 32; i++)
 			{
-				if ((result.data[result.DataLength - 1] & mask) != 0) break;
+				if ((result.data[result.DataLength - 1] & mask) != 0)
+					break;
 
 				result.data[result.DataLength - 1] |= mask;
 				mask >>= 1;
@@ -666,6 +731,7 @@ namespace IonLib.cryptoservices.util
 				//Console.WriteLine("shiftAmount = {0}", shiftAmount);
 
 				ulong carry = 0;
+
 				for (int i = bufLen - 1; i >= 0; i--)
 				{
 					ulong val = ((ulong)buffer[i]) >> shiftAmount;
@@ -691,7 +757,7 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator ~(BigInteger bi1)
 		{
-			BigInteger result = new BigInteger(bi1);
+			var result = new BigInteger(bi1);
 
 			for (int i = 0; i < maxLength; i++)
 			{
@@ -716,9 +782,10 @@ namespace IonLib.cryptoservices.util
 			// handle neg of zero separately since it'll cause an overflow
 			// if we proceed.
 
-			if (bi1.DataLength == 1 && bi1.data[0] == 0) return (new BigInteger());
+			if (bi1.DataLength == 1 && bi1.data[0] == 0)
+				return (new BigInteger());
 
-			BigInteger result = new BigInteger(bi1);
+			var result = new BigInteger(bi1);
 
 			// 1's complement
 			for (int i = 0; i < maxLength; i++)
@@ -741,7 +808,8 @@ namespace IonLib.cryptoservices.util
 				index++;
 			}
 
-			if ((bi1.data[maxLength - 1] & 0x80000000) == (result.data[maxLength - 1] & 0x80000000)) throw (new ArithmeticException("Overflow in negation.\n"));
+			if ((bi1.data[maxLength - 1] & 0x80000000) == (result.data[maxLength - 1] & 0x80000000))
+				throw (new ArithmeticException("Overflow in negation.\n"));
 
 			result.DataLength = maxLength;
 
@@ -749,6 +817,7 @@ namespace IonLib.cryptoservices.util
 			{
 				result.DataLength--;
 			}
+
 			return result;
 		}
 
@@ -767,14 +836,17 @@ namespace IonLib.cryptoservices.util
 
 		public override bool Equals(object o)
 		{
-			BigInteger bi = (BigInteger)o;
+			var bi = (BigInteger)o;
 
-			if (DataLength != bi.DataLength) return false;
+			if (DataLength != bi.DataLength)
+				return false;
 
 			for (int i = 0; i < DataLength; i++)
 			{
-				if (data[i] != bi.data[i]) return false;
+				if (data[i] != bi.data[i])
+					return false;
 			}
+
 			return true;
 		}
 
@@ -791,19 +863,23 @@ namespace IonLib.cryptoservices.util
 			int pos = maxLength - 1;
 
 			// bi1 is negative, bi2 is positive
-			if ((bi1.data[pos] & 0x80000000) != 0 && (bi2.data[pos] & 0x80000000) == 0) return false;
+			if ((bi1.data[pos] & 0x80000000) != 0
+				&& (bi2.data[pos] & 0x80000000) == 0)
+				return false;
 
 			// bi1 is positive, bi2 is negative
-			if ((bi1.data[pos] & 0x80000000) == 0 && (bi2.data[pos] & 0x80000000) != 0) return true;
+			if ((bi1.data[pos] & 0x80000000) == 0
+				&& (bi2.data[pos] & 0x80000000) != 0)
+				return true;
 
 			// same sign
 			int len = (bi1.DataLength > bi2.DataLength) ? bi1.DataLength : bi2.DataLength;
-			for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--) ;
+
+			for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--);
 
 			if (pos >= 0)
-			{
 				return bi1.data[pos] > bi2.data[pos];
-			}
+
 			return false;
 		}
 
@@ -812,19 +888,23 @@ namespace IonLib.cryptoservices.util
 			int pos = maxLength - 1;
 
 			// bi1 is negative, bi2 is positive
-			if ((bi1.data[pos] & 0x80000000) != 0 && (bi2.data[pos] & 0x80000000) == 0) return true;
+			if ((bi1.data[pos] & 0x80000000) != 0
+				&& (bi2.data[pos] & 0x80000000) == 0)
+				return true;
 
 			// bi1 is positive, bi2 is negative
-			if ((bi1.data[pos] & 0x80000000) == 0 && (bi2.data[pos] & 0x80000000) != 0) return false;
+			if ((bi1.data[pos] & 0x80000000) == 0
+				&& (bi2.data[pos] & 0x80000000) != 0)
+				return false;
 
 			// same sign
 			int len = (bi1.DataLength > bi2.DataLength) ? bi1.DataLength : bi2.DataLength;
-			for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--) ;
+
+			for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--);
 
 			if (pos >= 0)
-			{
 				return bi1.data[pos] < bi2.data[pos];
-			}
+
 			return false;
 		}
 
@@ -867,6 +947,7 @@ namespace IonLib.cryptoservices.util
 			{
 				remainder[i] = bi1.data[i];
 			}
+
 			ShiftLeft(remainder, shift);
 			bi2 = bi2 << shift;
 
@@ -907,7 +988,8 @@ namespace IonLib.cryptoservices.util
 						q_hat--;
 						r_hat += firstDivisorByte;
 
-						if (r_hat < 0x100000000) done = false;
+						if (r_hat < 0x100000000)
+							done = false;
 					}
 				}
 
@@ -916,8 +998,8 @@ namespace IonLib.cryptoservices.util
 					dividendPart[h] = remainder[pos - h];
 				}
 
-				BigInteger kk = new BigInteger(dividendPart);
-				BigInteger ss = bi2 * (long)q_hat;
+				var kk = new BigInteger(dividendPart);
+				var ss = bi2 * (long)q_hat;
 
 				//Console.WriteLine("ss before = " + ss);
 				while (ss > kk)
@@ -926,7 +1008,7 @@ namespace IonLib.cryptoservices.util
 					ss -= bi2;
 					//Console.WriteLine(ss);
 				}
-				BigInteger yy = kk - ss;
+				var yy = kk - ss;
 
 				//Console.WriteLine("ss = " + ss);
 				//Console.WriteLine("kk = " + kk);
@@ -952,10 +1034,12 @@ namespace IonLib.cryptoservices.util
 
 			outQuotient.DataLength = resultPos;
 			int y = 0;
+
 			for (int x = outQuotient.DataLength - 1; x >= 0; x--, y++)
 			{
 				outQuotient.data[y] = result[x];
 			}
+
 			for (; y < maxLength; y++)
 			{
 				outQuotient.data[y] = 0;
@@ -966,7 +1050,8 @@ namespace IonLib.cryptoservices.util
 				outQuotient.DataLength--;
 			}
 
-			if (outQuotient.DataLength == 0) outQuotient.DataLength = 1;
+			if (outQuotient.DataLength == 0)
+				outQuotient.DataLength = 1;
 
 			outRemainder.DataLength = ShiftRight(remainder, shift);
 
@@ -974,6 +1059,7 @@ namespace IonLib.cryptoservices.util
 			{
 				outRemainder.data[y] = remainder[y];
 			}
+
 			for (; y < maxLength; y++)
 			{
 				outRemainder.data[y] = 0;
@@ -994,6 +1080,7 @@ namespace IonLib.cryptoservices.util
 			{
 				outRemainder.data[i] = bi1.data[i];
 			}
+
 			outRemainder.DataLength = bi1.DataLength;
 
 			while (outRemainder.DataLength > 1 && outRemainder.data[outRemainder.DataLength - 1] == 0)
@@ -1015,6 +1102,7 @@ namespace IonLib.cryptoservices.util
 
 				outRemainder.data[pos] = (uint)(dividend % divisor);
 			}
+
 			pos--;
 
 			while (pos >= 0)
@@ -1031,11 +1119,14 @@ namespace IonLib.cryptoservices.util
 			}
 
 			outQuotient.DataLength = resultPos;
+
 			int j = 0;
+
 			for (int i = outQuotient.DataLength - 1; i >= 0; i--, j++)
 			{
 				outQuotient.data[j] = result[i];
 			}
+
 			for (; j < maxLength; j++)
 			{
 				outQuotient.data[j] = 0;
@@ -1047,9 +1138,7 @@ namespace IonLib.cryptoservices.util
 			}
 
 			if (outQuotient.DataLength == 0)
-			{
 				outQuotient.DataLength = 1;
-			}
 
 			while (outRemainder.DataLength > 1 && outRemainder.data[outRemainder.DataLength - 1] == 0)
 			{
@@ -1062,8 +1151,8 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator /(BigInteger bi1, BigInteger bi2)
 		{
-			BigInteger quotient = new BigInteger();
-			BigInteger remainder = new BigInteger();
+			var quotient = new BigInteger();
+			var remainder = new BigInteger();
 
 			int lastPos = maxLength - 1;
 			bool divisorNeg = false, dividendNeg = false;
@@ -1080,9 +1169,7 @@ namespace IonLib.cryptoservices.util
 			}
 
 			if (bi1 < bi2)
-			{
 				return quotient;
-			}
 
 			if (bi2.DataLength == 1)
 			{
@@ -1094,9 +1181,7 @@ namespace IonLib.cryptoservices.util
 			}
 
 			if (dividendNeg != divisorNeg)
-			{
 				return -quotient;
-			}
 
 			return quotient;
 		}
@@ -1106,8 +1191,8 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator %(BigInteger bi1, BigInteger bi2)
 		{
-			BigInteger quotient = new BigInteger();
-			BigInteger remainder = new BigInteger(bi1);
+			var quotient = new BigInteger();
+			var remainder = new BigInteger(bi1);
 
 			int lastPos = maxLength - 1;
 			bool dividendNeg = false;
@@ -1121,12 +1206,12 @@ namespace IonLib.cryptoservices.util
 				bi2 = -bi2;
 
 			if (bi1 < bi2)
-			{
 				return remainder;
-			}
 
-			if (bi2.DataLength == 1) SingleByteDivide(bi1, bi2, quotient, remainder);
-			else MultiByteDivide(bi1, bi2, quotient, remainder);
+			if (bi2.DataLength == 1)
+				SingleByteDivide(bi1, bi2, quotient, remainder);
+			else
+				MultiByteDivide(bi1, bi2, quotient, remainder);
 
 			return dividendNeg ? -remainder : remainder;
 		}
@@ -1136,7 +1221,7 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator &(BigInteger bi1, BigInteger bi2)
 		{
-			BigInteger result = new BigInteger();
+			var result = new BigInteger();
 
 			int len = (bi1.DataLength > bi2.DataLength) ? bi1.DataLength : bi2.DataLength;
 
@@ -1161,7 +1246,7 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator |(BigInteger bi1, BigInteger bi2)
 		{
-			BigInteger result = new BigInteger();
+			var result = new BigInteger();
 
 			int len = (bi1.DataLength > bi2.DataLength) ? bi1.DataLength : bi2.DataLength;
 
@@ -1186,7 +1271,7 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger operator ^(BigInteger bi1, BigInteger bi2)
 		{
-			BigInteger result = new BigInteger();
+			var result = new BigInteger();
 
 			int len = (bi1.DataLength > bi2.DataLength) ? bi1.DataLength : bi2.DataLength;
 
@@ -1250,17 +1335,20 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public string ToString(int radix)
 		{
-			if (radix < 2 || radix > 36) throw (new ArgumentException("Radix must be >= 2 and <= 36"));
+			if (radix < 2 || radix > 36)
+				throw (new ArgumentException("Radix must be >= 2 and <= 36"));
 
 			string charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			string result = "";
 
-			BigInteger a = this;
+			var a = this;
 
 			bool negative = false;
+
 			if ((a.data[maxLength - 1] & 0x80000000) != 0)
 			{
 				negative = true;
+
 				try
 				{
 					a = -a;
@@ -1272,19 +1360,24 @@ namespace IonLib.cryptoservices.util
 			BigInteger remainder = new BigInteger();
 			BigInteger biRadix = new BigInteger(radix);
 
-			if (a.DataLength == 1 && a.data[0] == 0) result = "0";
+			if (a.DataLength == 1 && a.data[0] == 0)
+				result = "0";
 			else
 			{
 				while (a.DataLength > 1 || (a.DataLength == 1 && a.data[0] != 0))
 				{
 					SingleByteDivide(a, biRadix, quotient, remainder);
 
-					if (remainder.data[0] < 10) result = remainder.data[0] + result;
-					else result = charSet[(int)remainder.data[0] - 10] + result;
+					if (remainder.data[0] < 10)
+						result = remainder.data[0] + result;
+					else
+						result = charSet[(int)remainder.data[0] - 10] + result;
 
 					a = quotient;
 				}
-				if (negative) result = "-" + result;
+
+				if (negative)
+					result = "-" + result;
 			}
 
 			return result;
@@ -1322,7 +1415,8 @@ namespace IonLib.cryptoservices.util
 
 		public BigInteger ModPow(BigInteger exp, BigInteger n)
 		{
-			if ((exp.data[maxLength - 1] & 0x80000000) != 0) throw (new ArithmeticException("Positive exponents only."));
+			if ((exp.data[maxLength - 1] & 0x80000000) != 0)
+				throw (new ArithmeticException("Positive exponents only."));
 
 			BigInteger resultNum = 1;
 			BigInteger tempNum;
@@ -1341,7 +1435,7 @@ namespace IonLib.cryptoservices.util
 			}
 
 			// calculate constant = b^(2k) / m
-			BigInteger constant = new BigInteger();
+			var constant = new BigInteger();
 
 			int i = n.DataLength << 1;
 			constant.data[i] = 0x00000001;
@@ -1390,19 +1484,22 @@ namespace IonLib.cryptoservices.util
 		{
 			int k = n.DataLength, kPlusOne = k + 1, kMinusOne = k - 1;
 
-			BigInteger q1 = new BigInteger();
+			var q1 = new BigInteger();
 
 			// q1 = x / b^(k-1)
 			for (int i = kMinusOne, j = 0; i < x.DataLength; i++, j++)
 			{
 				q1.data[j] = x.data[i];
 			}
+
 			q1.DataLength = x.DataLength - kMinusOne;
-			if (q1.DataLength <= 0) q1.DataLength = 1;
+
+			if (q1.DataLength <= 0)
+				q1.DataLength = 1;
 
 
-			BigInteger q2 = q1 * constant;
-			BigInteger q3 = new BigInteger();
+			var q2 = q1 * constant;
+			var q3 = new BigInteger();
 
 			// q3 = q2 / b^(k+1)
 			for (int i = kPlusOne, j = 0; i < q2.DataLength; i++, j++)
@@ -1410,30 +1507,35 @@ namespace IonLib.cryptoservices.util
 				q3.data[j] = q2.data[i];
 			}
 			q3.DataLength = q2.DataLength - kPlusOne;
-			if (q3.DataLength <= 0) q3.DataLength = 1;
 
+			if (q3.DataLength <= 0)
+				q3.DataLength = 1;
 
 			// r1 = x mod b^(k+1)
 			// i.e. keep the lowest (k+1) words
-			BigInteger r1 = new BigInteger();
+			var r1 = new BigInteger();
 			int lengthToCopy = (x.DataLength > kPlusOne) ? kPlusOne : x.DataLength;
+
 			for (int i = 0; i < lengthToCopy; i++)
 			{
 				r1.data[i] = x.data[i];
 			}
-			r1.DataLength = lengthToCopy;
 
+			r1.DataLength = lengthToCopy;
 
 			// r2 = (q3 * n) mod b^(k+1)
 			// partial multiplication of q3 and n
 
-			BigInteger r2 = new BigInteger();
+			var r2 = new BigInteger();
+
 			for (int i = 0; i < q3.DataLength; i++)
 			{
-				if (q3.data[i] == 0) continue;
+				if (q3.data[i] == 0)
+					continue;
 
 				ulong mcarry = 0;
 				int t = i;
+
 				for (int j = 0; j < n.DataLength && t < kPlusOne; j++, t++)
 				{
 					// t = i + j
@@ -1444,18 +1546,22 @@ namespace IonLib.cryptoservices.util
 					mcarry = (val >> 32);
 				}
 
-				if (t < kPlusOne) r2.data[t] = (uint)mcarry;
+				if (t < kPlusOne)
+					r2.data[t] = (uint)mcarry;
 			}
+
 			r2.DataLength = kPlusOne;
+
 			while (r2.DataLength > 1 && r2.data[r2.DataLength - 1] == 0)
 			{
 				r2.DataLength--;
 			}
 
 			r1 -= r2;
+
 			if ((r1.data[maxLength - 1] & 0x80000000) != 0)        // negative
 			{
-				BigInteger val = new BigInteger();
+				var val = new BigInteger();
 				val.data[kPlusOne] = 0x00000001;
 				val.DataLength = kPlusOne + 1;
 				r1 += val;
@@ -1481,7 +1587,7 @@ namespace IonLib.cryptoservices.util
 
 			y = (bi.data[maxLength - 1] & 0x80000000) != 0 ? -bi : bi;
 
-			BigInteger g = y;
+			var g = y;
 
 			while (x.DataLength > 1 || (x.DataLength == 1 && x.data[0] != 0))
 			{
@@ -1501,9 +1607,11 @@ namespace IonLib.cryptoservices.util
 			int dwords = bits >> 5;
 			int remBits = bits & 0x1F;
 
-			if (remBits != 0) dwords++;
+			if (remBits != 0)
+				dwords++;
 
-			if (dwords > maxLength) throw (new ArithmeticException("Number of required bits > maxLength."));
+			if (dwords > maxLength)
+				throw (new ArithmeticException("Number of required bits > maxLength."));
 
 			for (int i = 0; i < dwords; i++)
 			{
@@ -1527,7 +1635,8 @@ namespace IonLib.cryptoservices.util
 
 			DataLength = dwords;
 
-			if (DataLength == 0) DataLength = 1;
+			if (DataLength == 0)
+				DataLength = 1;
 		}
 
 		//***********************************************************************
@@ -1581,6 +1690,7 @@ namespace IonLib.cryptoservices.util
 		public bool FermatLittleTest(int confidence)
 		{
 			BigInteger thisVal;
+
 			if ((data[maxLength - 1] & 0x80000000) != 0) // negative
 				thisVal = -this;
 			else
@@ -1593,19 +1703,21 @@ namespace IonLib.cryptoservices.util
 				{
 					case 0:
 					case 1:
-					return false;
+						return false;
+
 					case 2:
 					case 3:
-					return true;
+						return true;
 				}
 			}
 
-			if ((thisVal.data[0] & 0x1) == 0) return false; // even numbers
+			if ((thisVal.data[0] & 0x1) == 0)
+				return false; // even numbers
 
 			int bits = thisVal.BitCount();
-			BigInteger a = new BigInteger();
-			BigInteger p_sub1 = thisVal - (new BigInteger(1));
-			StrongNumberProvider rand = new StrongNumberProvider();
+			var a = new BigInteger();
+			var p_sub1 = thisVal - (new BigInteger(1));
+			var rand = new StrongNumberProvider();
 
 			for (int round = 0; round < confidence; round++)
 			{
@@ -1633,14 +1745,13 @@ namespace IonLib.cryptoservices.util
 				}
 
 				// check whether a factor exists (fix for version 1.03)
-				BigInteger gcdTest = a.Gcd(thisVal);
+				var gcdTest = a.Gcd(thisVal);
+
 				if (gcdTest.DataLength == 1 && gcdTest.data[0] != 1)
-				{
 					return false;
-				}
 
 				// calculate a^(p-1) mod p
-				BigInteger expResult = a.ModPow(p_sub1, thisVal);
+				var expResult = a.ModPow(p_sub1, thisVal);
 
 				int resultLen = expResult.DataLength;
 
@@ -1687,17 +1798,18 @@ namespace IonLib.cryptoservices.util
 				{
 					case 0:
 					case 1:
-					return false;
+						return false;
 					case 2:
 					case 3:
-					return true;
+						return true;
 				}
 			}
 
-			if ((thisVal.data[0] & 0x1) == 0) return false; // even numbers
+			if ((thisVal.data[0] & 0x1) == 0)
+				return false; // even numbers
 
 			// calculate values of s and t
-			BigInteger p_sub1 = thisVal - (new BigInteger(1));
+			var p_sub1 = thisVal - (new BigInteger(1));
 			int s = 0;
 
 			for (int index = 0; index < p_sub1.DataLength; index++)
@@ -1719,7 +1831,7 @@ namespace IonLib.cryptoservices.util
 			BigInteger t = p_sub1 >> s;
 
 			int bits = thisVal.BitCount();
-			BigInteger a = new BigInteger();
+			var a = new BigInteger();
 			StrongNumberProvider rand = new StrongNumberProvider();
 
 			for (int round = 0; round < confidence; round++)
@@ -1746,13 +1858,11 @@ namespace IonLib.cryptoservices.util
 				}
 
 				// check whether a factor exists (fix for version 1.03)
-				BigInteger gcdTest = a.Gcd(thisVal);
+				var gcdTest = a.Gcd(thisVal);
 				if (gcdTest.DataLength == 1 && gcdTest.data[0] != 1)
-				{
 					return false;
-				}
 
-				BigInteger b = a.ModPow(t, thisVal);
+				var b = a.ModPow(t, thisVal);
 
 				bool result = b.DataLength == 1 && b.data[0] == 1;
 
@@ -1767,9 +1877,10 @@ namespace IonLib.cryptoservices.util
 					b = (b * b) % thisVal;
 				}
 
-				if (result == false)
+				if (!result)
 					return false;
 			}
+
 			return true;
 		}
 
@@ -1804,22 +1915,22 @@ namespace IonLib.cryptoservices.util
 				{
 					case 0:
 					case 1:
-					return false;
+						return false;
 					case 2:
 					case 3:
-					return true;
+						return true;
 				}
 			}
 
-			if ((thisVal.data[0] & 0x1) == 0) return false; // even numbers
-
+			if ((thisVal.data[0] & 0x1) == 0)
+				return false; // even numbers
 
 			int bits = thisVal.BitCount();
-			BigInteger a = new BigInteger();
-			BigInteger p_sub1 = thisVal - 1;
-			BigInteger p_sub1_shift = p_sub1 >> 1;
+			var a = new BigInteger();
+			var p_sub1 = thisVal - 1;
+			var p_sub1_shift = p_sub1 >> 1;
 
-			StrongNumberProvider rand = new StrongNumberProvider();
+			var rand = new StrongNumberProvider();
 
 			for (int round = 0; round < confidence; round++)
 			{
@@ -1847,31 +1958,26 @@ namespace IonLib.cryptoservices.util
 				}
 
 				// check whether a factor exists (fix for version 1.03)
-				BigInteger gcdTest = a.Gcd(thisVal);
+				var gcdTest = a.Gcd(thisVal);
+
 				if (gcdTest.DataLength == 1 && gcdTest.data[0] != 1)
-				{
 					return false;
-				}
 
 				// calculate a^((p-1)/2) mod p
 
-				BigInteger expResult = a.ModPow(p_sub1_shift, thisVal);
+				var expResult = a.ModPow(p_sub1_shift, thisVal);
 				if (expResult == p_sub1)
-				{
 					expResult = -1;
-				}
 
 				// calculate Jacobi symbol
-				BigInteger jacob = Jacobi(a, thisVal);
+				var jacob = Jacobi(a, thisVal);
 
 				//Console.WriteLine("a = " + a.ToString(10) + " b = " + thisVal.ToString(10));
 				//Console.WriteLine("expResult = " + expResult.ToString(10) + " Jacob = " + jacob.ToString(10));
 
 				// if they are different then it is not prime
 				if (expResult != jacob)
-				{
 					return false;
-				}
 			}
 
 			return true;
@@ -1901,14 +2007,15 @@ namespace IonLib.cryptoservices.util
 				{
 					case 0:
 					case 1:
-					return false;
+						return false;
 					case 2:
 					case 3:
-					return true;
+						return true;
 				}
 			}
 
-			return (thisVal.data[0] & 0x1) != 0 && LucasStrongTestHelper(thisVal);
+			return (thisVal.data[0] & 0x1) != 0
+				&& LucasStrongTestHelper(thisVal);
 		}
 
 		static bool LucasStrongTestHelper(BigInteger thisVal)
@@ -1925,16 +2032,20 @@ namespace IonLib.cryptoservices.util
 			{
 				int Jresult = Jacobi(D, thisVal);
 
-				if (Jresult == -1) done = true;    // J(D, this) = 1
+				if (Jresult == -1)
+					done = true;    // J(D, this) = 1
 				else
 				{
-					if (Jresult == 0 && Math.Abs(D) < thisVal) return false; // divisor found
+					if (Jresult == 0 && Math.Abs(D) < thisVal)
+						return false; // divisor found
 
 					if (dCount == 20)
 					{
 						// check for square
-						BigInteger root = thisVal.Sqrt();
-						if (root * root == thisVal) return false;
+						var root = thisVal.Sqrt();
+
+						if (root * root == thisVal)
+							return false;
 					}
 
 					//Console.WriteLine(D);
@@ -1946,7 +2057,7 @@ namespace IonLib.cryptoservices.util
 
 			long Q = (1 - D) >> 2;
 
-			BigInteger p_add1 = thisVal + 1;
+			var p_add1 = thisVal + 1;
 			int s = 0;
 
 			for (int index = 0; index < p_add1.DataLength; index++)
@@ -1965,11 +2076,11 @@ namespace IonLib.cryptoservices.util
 				}
 			}
 
-			BigInteger t = p_add1 >> s;
+			var t = p_add1 >> s;
 
 			// calculate constant = b^(2k) / m
 			// for Barrett Reduction
-			BigInteger constant = new BigInteger();
+			var constant = new BigInteger();
 
 			int nLen = thisVal.DataLength << 1;
 			constant.data[nLen] = 0x00000001;
@@ -1977,7 +2088,7 @@ namespace IonLib.cryptoservices.util
 
 			constant = constant / thisVal;
 
-			BigInteger[] lucas = LucasSequenceHelper(1, Q, t, thisVal, constant, 0);
+			var lucas = LucasSequenceHelper(1, Q, t, thisVal, constant, 0);
 			bool isPrime = (lucas[0].DataLength == 1 && lucas[0].data[0] == 0) || (lucas[1].DataLength == 1 && lucas[1].data[0] == 0);
 
 			for (int i = 1; i < s; i++)
@@ -1990,25 +2101,33 @@ namespace IonLib.cryptoservices.util
 
 					//lucas[1] = ((lucas[1] * lucas[1]) - (lucas[2] << 1)) % thisVal;
 
-					if ((lucas[1].DataLength == 1 && lucas[1].data[0] == 0)) isPrime = true;
+					if ((lucas[1].DataLength == 1
+						&& lucas[1].data[0] == 0))
+						isPrime = true;
 				}
 
 				lucas[2] = thisVal.BarrettReduction(lucas[2] * lucas[2], thisVal, constant); //Q^k
 			}
 
-			if (!isPrime) return isPrime;
+			if (!isPrime)
+				return isPrime;
+
 			// If n is prime and gcd(n, Q) == 1, then
 			// Q^((n+1)/2) = Q * Q^((n-1)/2) is congruent to (Q * J(Q, n)) mod n
 
-			BigInteger g = thisVal.Gcd(Q);
-			if (g.DataLength != 1 || g.data[0] != 1) return isPrime;
+			var g = thisVal.Gcd(Q);
+			if (g.DataLength != 1 || g.data[0] != 1)
+				return isPrime;
 
-			if ((lucas[2].data[maxLength - 1] & 0x80000000) != 0) lucas[2] += thisVal;
+			if ((lucas[2].data[maxLength - 1] & 0x80000000) != 0)
+				lucas[2] += thisVal;
 
-			BigInteger temp = (Q * Jacobi(Q, thisVal)) % thisVal;
-			if ((temp.data[maxLength - 1] & 0x80000000) != 0) temp += thisVal;
+			var temp = (Q * Jacobi(Q, thisVal)) % thisVal;
+			if ((temp.data[maxLength - 1] & 0x80000000) != 0)
+				temp += thisVal;
 
-			if (lucas[2] != temp) isPrime = false;
+			if (lucas[2] != temp)
+				isPrime = false;
 
 			return isPrime;
 		}
@@ -2025,7 +2144,11 @@ namespace IonLib.cryptoservices.util
 			var thisVal = (data[maxLength - 1] & 0x80000000) != 0 ? -this : this; //negative
 
 			// test for divisibility by primes < 2000
-			return PrimesBelow2000.TakeWhile(divisor => divisor < thisVal).Select(divisor => thisVal % divisor).All(resultNum => resultNum.IntValue() != 0) && thisVal.RabinMillerTest(confidence);
+			return PrimesBelow2000
+				.TakeWhile(divisor => divisor < thisVal)
+				.Select(divisor => thisVal % divisor)
+				.All(resultNum => resultNum.IntValue() != 0)
+				&& thisVal.RabinMillerTest(confidence);
 		}
 
 		//***********************************************************************
@@ -2067,19 +2190,17 @@ namespace IonLib.cryptoservices.util
 				}
 			}
 
-			if ((thisVal.data[0] & 0x1) == 0) return false; //even numbers
-
+			if ((thisVal.data[0] & 0x1) == 0)
+				return false; //even numbers
 
 			// test for divisibility by primes < 2000
 			if (PrimesBelow2000.Cast<BigInteger>().TakeWhile(divisor => divisor < thisVal).Select(divisor => thisVal % divisor).Any(resultNum => resultNum.IntValue() == 0))
-			{
 				return false;
-			}
 
 			// Perform BASE 2 Rabin-Miller Test
 
 			// calculate values of s and t
-			BigInteger p_sub1 = thisVal - (new BigInteger(1));
+			var p_sub1 = thisVal - (new BigInteger(1));
 			int s = 0;
 
 			for (int index = 0; index < p_sub1.DataLength; index++)
@@ -2098,13 +2219,13 @@ namespace IonLib.cryptoservices.util
 				}
 			}
 
-			BigInteger t = p_sub1 >> s;
+			var t = p_sub1 >> s;
 
 			int bits = thisVal.BitCount();
 			BigInteger a = 2;
 
 			// b = a^t mod p
-			BigInteger b = a.ModPow(t, thisVal);
+			var b = a.ModPow(t, thisVal);
 			bool result = b.DataLength == 1 && b.data[0] == 1; //a^t mod p = 1
 
 			for (int j = 0; !result && j < s; j++)
@@ -2119,7 +2240,8 @@ namespace IonLib.cryptoservices.util
 			}
 
 			// if number is strong pseudoprime to base 2, then do a strong lucas test
-			if (result) result = LucasStrongTestHelper(thisVal);
+			if (result)
+				result = LucasStrongTestHelper(thisVal);
 
 			return result;
 		}
@@ -2140,6 +2262,7 @@ namespace IonLib.cryptoservices.util
 			long val = 0;
 
 			val = data[0];
+
 			try
 			{       // exception if maxLength = 1
 				val |= (long)data[1] << 32;
@@ -2160,20 +2283,28 @@ namespace IonLib.cryptoservices.util
 		public static int Jacobi(BigInteger a, BigInteger b)
 		{
 			// Jacobi defined only for odd integers
-			if ((b.data[0] & 0x1) == 0) throw (new ArgumentException("Jacobi defined only for odd integers."));
+			if ((b.data[0] & 0x1) == 0)
+				throw (new ArgumentException("Jacobi defined only for odd integers."));
 
-			if (a >= b) a %= b;
-			if (a.DataLength == 1 && a.data[0] == 0) return 0;  // a == 0
-			if (a.DataLength == 1 && a.data[0] == 1) return 1;  // a == 1
+			if (a >= b)
+				a %= b;
+
+			if (a.DataLength == 1 && a.data[0] == 0)
+				return 0;  // a == 0
+
+			if (a.DataLength == 1 && a.data[0] == 1)
+				return 1;  // a == 1
 
 			if (a < 0)
 			{
-				if ((((b - 1).data[0]) & 0x2) == 0) return Jacobi(-a, b); //if( (((b-1) >> 1).data[0] & 0x1) == 0)
+				if ((((b - 1).data[0]) & 0x2) == 0)
+					return Jacobi(-a, b); //if( (((b-1) >> 1).data[0] & 0x1) == 0)
 
 				return -Jacobi(-a, b);
 			}
 
 			int e = 0;
+
 			for (int index = 0; index < a.DataLength; index++)
 			{
 				uint mask = 0x01;
@@ -2190,11 +2321,18 @@ namespace IonLib.cryptoservices.util
 				}
 			}
 
-			BigInteger a1 = a >> e;
+			var a1 = a >> e;
 
 			int s = 1;
-			if ((e & 0x1) != 0 && ((b.data[0] & 0x7) == 3 || (b.data[0] & 0x7) == 5)) s = -1;
-			if ((b.data[0] & 0x3) == 3 && (a1.data[0] & 0x3) == 3) s = -s;
+			if ((e & 0x1) != 0
+				&& ((b.data[0] & 0x7) == 3
+				|| (b.data[0] & 0x7) == 5))
+				s = -1;
+
+			if ((b.data[0] & 0x3) == 3
+				&& (a1.data[0] & 0x3) == 3)
+				s = -s;
+
 			return a1.DataLength == 1 && a1.data[0] == 1 ? s : s * Jacobi(b % a1, a1);
 		}
 
@@ -2203,7 +2341,7 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public static BigInteger GenPseudoPrime(int bits, int confidence, StrongNumberProvider rand)
 		{
-			BigInteger result = new BigInteger();
+			var result = new BigInteger();
 			bool done = false;
 
 			while (!done)
@@ -2223,15 +2361,17 @@ namespace IonLib.cryptoservices.util
 		public BigInteger GenCoPrime(int bits, StrongNumberProvider rand)
 		{
 			bool done = false;
-			BigInteger result = new BigInteger();
+			var result = new BigInteger();
 
 			while (!done)
 			{
 				result.GenRandomBits(bits, rand);
 				//Console.WriteLine(result.ToString(16));
 
-				BigInteger g = result.Gcd(this); // gcd test
-				if (g.DataLength == 1 && g.data[0] == 1) done = true;
+				var g = result.Gcd(this); // gcd test
+
+				if (g.DataLength == 1 && g.data[0] == 1)
+					done = true;
 			}
 
 			return result;
@@ -2244,28 +2384,30 @@ namespace IonLib.cryptoservices.util
 		public BigInteger ModInverse(BigInteger modulus)
 		{
 			BigInteger[] p = { 0, 1 };
-			BigInteger[] q = new BigInteger[2];    // quotients
-			BigInteger[] r = { 0, 0 };             // remainders
+			var q = new BigInteger[2]; // quotients
+			BigInteger[] r = { 0, 0 }; // remainders
 
 			int step = 0;
 
-			BigInteger a = modulus;
-			BigInteger b = this;
+			var a = modulus;
+			var b = this;
 
 			while (b.DataLength > 1 || (b.DataLength == 1 && b.data[0] != 0))
 			{
-				BigInteger quotient = new BigInteger();
-				BigInteger remainder = new BigInteger();
+				var quotient = new BigInteger();
+				var remainder = new BigInteger();
 
 				if (step > 1)
 				{
-					BigInteger pval = (p[0] - (p[1] * q[0])) % modulus;
+					var pval = (p[0] - (p[1] * q[0])) % modulus;
 					p[0] = p[1];
 					p[1] = pval;
 				}
 
-				if (b.DataLength == 1) SingleByteDivide(a, b, quotient, remainder);
-				else MultiByteDivide(a, b, quotient, remainder);
+				if (b.DataLength == 1)
+					SingleByteDivide(a, b, quotient, remainder);
+				else
+					MultiByteDivide(a, b, quotient, remainder);
 
 				//Console.WriteLine(quotient.DataLength);
 				//Console.WriteLine("{0} = {1}({2}) + {3}  p = {4}", a.ToString(10), b.ToString(10), quotient.ToString(10), remainder.ToString(10), p[1].ToString(10));
@@ -2280,11 +2422,13 @@ namespace IonLib.cryptoservices.util
 				step++;
 			}
 
-			if (r[0].DataLength > 1 || (r[0].DataLength == 1 && r[0].data[0] != 1)) throw (new ArithmeticException("No inverse!"));
+			if (r[0].DataLength > 1 || (r[0].DataLength == 1 && r[0].data[0] != 1))
+				throw (new ArithmeticException("No inverse!"));
 
-			BigInteger result = ((p[0] - (p[1] * q[0])) % modulus);
+			var result = ((p[0] - (p[1] * q[0])) % modulus);
 
-			if ((result.data[maxLength - 1] & 0x80000000) != 0) result += modulus;  // get the least positive modulus
+			if ((result.data[maxLength - 1] & 0x80000000) != 0)
+				result += modulus;  // get the least positive modulus
 
 			return result;
 		}
@@ -2298,7 +2442,9 @@ namespace IonLib.cryptoservices.util
 			int numBits = BitCount();
 
 			int numBytes = numBits >> 3;
-			if ((numBits & 0x7) != 0) numBytes++;
+			
+			if ((numBits & 0x7) != 0)
+				numBytes++;
 
 			byte[] result = new byte[numBytes];
 
@@ -2307,10 +2453,17 @@ namespace IonLib.cryptoservices.util
 			int pos = 0;
 			uint tempVal, val = data[DataLength - 1];
 
-			if ((tempVal = (val >> 24 & 0xFF)) != 0) result[pos++] = (byte)tempVal;
-			if ((tempVal = (val >> 16 & 0xFF)) != 0) result[pos++] = (byte)tempVal;
-			if ((tempVal = (val >> 8 & 0xFF)) != 0) result[pos++] = (byte)tempVal;
-			if ((tempVal = (val & 0xFF)) != 0) result[pos++] = (byte)tempVal;
+			if ((tempVal = (val >> 24 & 0xFF)) != 0)
+				result[pos++] = (byte)tempVal;
+
+			if ((tempVal = (val >> 16 & 0xFF)) != 0)
+				result[pos++] = (byte)tempVal;
+
+			if ((tempVal = (val >> 8 & 0xFF)) != 0)
+				result[pos++] = (byte)tempVal;
+
+			if ((tempVal = (val & 0xFF)) != 0)
+				result[pos++] = (byte)tempVal;
 
 			for (int i = DataLength - 2; i >= 0; i--, pos += 4)
 			{
@@ -2333,13 +2486,14 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		public void SetBit(uint bitNum)
 		{
-			uint bytePos = bitNum >> 5;             // divide by 32
-			byte bitPos = (byte)(bitNum & 0x1F);    // get the lowest 5 bits
+			uint bytePos = bitNum >> 5; // divide by 32
+			byte bitPos = (byte)(bitNum & 0x1F); // get the lowest 5 bits
 
 			uint mask = (uint)1 << bitPos;
 			data[bytePos] |= mask;
 
-			if (bytePos >= DataLength) DataLength = (int)bytePos + 1;
+			if (bytePos >= DataLength)
+				DataLength = (int)bytePos + 1;
 		}
 
 		//***********************************************************************
@@ -2350,7 +2504,8 @@ namespace IonLib.cryptoservices.util
 		{
 			uint bytePos = bitNum >> 5;
 
-			if (bytePos >= DataLength) return;
+			if (bytePos >= DataLength)
+				return;
 
 			byte bitPos = (byte)(bitNum & 0x1F);
 
@@ -2359,7 +2514,8 @@ namespace IonLib.cryptoservices.util
 
 			data[bytePos] &= mask2;
 
-			if (DataLength > 1 && data[DataLength - 1] == 0) DataLength--;
+			if (DataLength > 1 && data[DataLength - 1] == 0)
+				DataLength--;
 		}
 
 		//***********************************************************************
@@ -2381,13 +2537,16 @@ namespace IonLib.cryptoservices.util
 
 			uint mask;
 
-			BigInteger result = new BigInteger();
-			if (bitPos == 0) mask = 0x80000000;
+			var result = new BigInteger();
+
+			if (bitPos == 0)
+				mask = 0x80000000;
 			else
 			{
 				mask = (uint)1 << bitPos;
 				bytePos++;
 			}
+
 			result.DataLength = (int)bytePos;
 
 			for (int i = (int)bytePos - 1; i >= 0; i--)
@@ -2398,12 +2557,14 @@ namespace IonLib.cryptoservices.util
 					result.data[i] ^= mask;
 
 					// undo the guess if its square is larger than this
-					if ((result * result) > this) result.data[i] ^= mask;
+					if ((result * result) > this)
+						result.data[i] ^= mask;
 
 					mask >>= 1;
 				}
 				mask = 0x80000000;
 			}
+
 			return result;
 		}
 
@@ -2442,7 +2603,7 @@ namespace IonLib.cryptoservices.util
 		{
 			if (k.DataLength == 1 && k.data[0] == 0)
 			{
-				BigInteger[] result = new BigInteger[3];
+				var result = new BigInteger[3];
 
 				result[0] = 0; result[1] = 2 % n; result[2] = 1 % n;
 				return result;
@@ -2450,7 +2611,7 @@ namespace IonLib.cryptoservices.util
 
 			// calculate constant = b^(2k) / m
 			// for Barrett Reduction
-			BigInteger constant = new BigInteger();
+			var constant = new BigInteger();
 
 			int nLen = n.DataLength << 1;
 			constant.data[nLen] = 0x00000001;
@@ -2477,7 +2638,7 @@ namespace IonLib.cryptoservices.util
 				}
 			}
 
-			BigInteger t = k >> s;
+			var t = k >> s;
 
 			//Console.WriteLine("s = " + s + " t = " + t);
 			return LucasSequenceHelper(P, Q, t, n, constant, s);
@@ -2491,9 +2652,10 @@ namespace IonLib.cryptoservices.util
 		//***********************************************************************
 		static BigInteger[] LucasSequenceHelper(BigInteger P, BigInteger Q, BigInteger k, BigInteger n, BigInteger constant, int s)
 		{
-			BigInteger[] result = new BigInteger[3];
+			var result = new BigInteger[3];
 
-			if ((k.data[0] & 0x00000001) == 0) throw (new ArgumentException("Argument k must be odd."));
+			if ((k.data[0] & 0x00000001) == 0)
+				throw (new ArgumentException("Argument k must be odd."));
 
 			int numbits = k.BitCount();
 			uint mask = (uint)0x1 << ((numbits & 0x1F) - 1);
@@ -2508,7 +2670,8 @@ namespace IonLib.cryptoservices.util
 				//Console.WriteLine("round");
 				while (mask != 0)
 				{
-					if (i == 0 && mask == 0x00000001) break; // last bit
+					if (i == 0 && mask == 0x00000001)
+						break; // last bit
 
 					if ((k.data[i] & mask) != 0)             // bit is set
 					{
@@ -2520,8 +2683,10 @@ namespace IonLib.cryptoservices.util
 						v1 = n.BarrettReduction(v1 * v1, n, constant);
 						v1 = (v1 - ((Q_k * Q) << 1)) % n;
 
-						if (flag) flag = false;
-						else Q_k = n.BarrettReduction(Q_k * Q_k, n, constant);
+						if (flag)
+							flag = false;
+						else
+							Q_k = n.BarrettReduction(Q_k * Q_k, n, constant);
 
 						Q_k = (Q_k * Q) % n;
 					}
@@ -2539,7 +2704,8 @@ namespace IonLib.cryptoservices.util
 							Q_k = Q % n;
 							flag = false;
 						}
-						else Q_k = n.BarrettReduction(Q_k * Q_k, n, constant);
+						else
+							Q_k = n.BarrettReduction(Q_k * Q_k, n, constant);
 					}
 
 					mask >>= 1;
@@ -2552,11 +2718,13 @@ namespace IonLib.cryptoservices.util
 
 			u1 = ((u1 * v) - Q_k) % n;
 			v = ((v * v1) - (P * Q_k)) % n;
-			if (flag) flag = false;
-			else Q_k = n.BarrettReduction(Q_k * Q_k, n, constant);
+
+			if (flag)
+				flag = false;
+			else
+				Q_k = n.BarrettReduction(Q_k * Q_k, n, constant);
 
 			Q_k = (Q_k * Q) % n;
-
 
 			for (int i = 0; i < s; i++)
 			{
@@ -2564,7 +2732,8 @@ namespace IonLib.cryptoservices.util
 				u1 = (u1 * v) % n;
 				v = ((v * v) - (Q_k << 1)) % n;
 
-				if (!flag) Q_k = n.BarrettReduction(Q_k * Q_k, n, constant);
+				if (!flag)
+					Q_k = n.BarrettReduction(Q_k * Q_k, n, constant);
 			}
 
 			result[0] = u1;

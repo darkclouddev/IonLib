@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Text;
-using IonLib.cryptoservices.util;
 
-namespace IonLib.cryptoservices
+using IonLib.Cryptoservices.Util;
+
+namespace IonLib.Cryptoservices
 {
 	public class DiffieHellmanEngine : IDisposable
 	{
@@ -68,28 +69,25 @@ namespace IonLib.cryptoservices
 
 			// Generate the would-be fields.
 			using (BigInteger prime = new BigInteger(parts[0], 36))
+			using (BigInteger g = new BigInteger(parts[1], 36))
+			using (BigInteger mine = BigInteger.GenPseudoPrime(bits, 30, _strongRng))
 			{
-				using (BigInteger g = new BigInteger(parts[1], 36))
+				// Generate the key.
+				using (BigInteger given = new BigInteger(parts[2], 36))
 				{
-					using (BigInteger mine = BigInteger.GenPseudoPrime(bits, 30, _strongRng))
+					using (BigInteger key = given.ModPow(mine, prime))
 					{
-						// Generate the key.
-						using (BigInteger given = new BigInteger(parts[2], 36))
-						{
-							using (BigInteger key = given.ModPow(mine, prime))
-							{
-								Key = key.GetBytes();
-							}
-						}
-
-						// Generate the response.
-						using (BigInteger send = g.ModPow(mine, prime))
-						{
-							representation = send.ToString(36);
-						}
+						Key = key.GetBytes();
 					}
 				}
+
+				// Generate the response.
+				using (BigInteger send = g.ModPow(mine, prime))
+				{
+					representation = send.ToString(36);
+				}
 			}
+
 			return this;
 		}
 
@@ -98,26 +96,27 @@ namespace IonLib.cryptoservices
 		{
 			// Get the response and modpow it with the stored prime.
 			using (BigInteger given = new BigInteger(response, 36))
+			using (BigInteger key = given.ModPow(privatePrime, prime))
 			{
-				using (BigInteger key = given.ModPow(privatePrime, prime))
-				{
-					Key = key.GetBytes();
-				}
+				Key = key.GetBytes();
 			}
+
 			Dispose();
 		}
 
-		public override string ToString()
-		{
-			return representation;
-		}
+		public override string ToString() => representation;
 
 		//Ends the calculation. The key will still be available
 		public void Dispose()
 		{
-			if (!ReferenceEquals(prime, null)) prime.Dispose();
-			if (!ReferenceEquals(privatePrime, null)) privatePrime.Dispose();
-			if (!ReferenceEquals(sharedBase, null)) sharedBase.Dispose();
+			if (!ReferenceEquals(prime, null))
+				prime.Dispose();
+
+			if (!ReferenceEquals(privatePrime, null))
+				privatePrime.Dispose();
+
+			if (!ReferenceEquals(sharedBase, null))
+				sharedBase.Dispose();
 
 			prime = null;
 			privatePrime = null;

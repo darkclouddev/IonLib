@@ -1,43 +1,41 @@
 ﻿using System;
 using System.Text;
-using IonLib.cryptoservices;
-using IonLib.network;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using IonLib.Cryptoservices;
+using IonLib.Network;
+
+using Xunit;
 
 namespace IonLibTests
 {
-	/// <summary>
-	/// Tests class for IonLib
-	/// </summary>
-	[TestClass]
 	public class IonLibTests
 	{
-		[TestMethod]
+		[Fact]
 		public void DiffieHellmannGeneration()
 		{
 			DiffieHellmanEngine server = new DiffieHellmanEngine(512).GenerateRequest();
 			DiffieHellmanEngine client = new DiffieHellmanEngine(512).GenerateResponse(server.ToString());
 			server.HandleResponse(client.ToString());
 
-			Console.Write($"server key={BitConverter.ToString(server.Key)}");
-			Console.Write($"client key={BitConverter.ToString(client.Key)}");
+			//Console.Write($"server key={BitConverter.ToString(server.Key)}");
+			//Console.Write($"client key={BitConverter.ToString(client.Key)}");
 
-			Assert.AreEqual(Convert.ToBase64String(server.Key), Convert.ToBase64String(client.Key));
+			Assert.Equal(Convert.ToBase64String(server.Key), Convert.ToBase64String(client.Key));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void AESEncryption()
 		{
 			byte[] key = Encoding.UTF8.GetBytes("testaeskeyconstant");
 			string iv = Generator.NextIVForAES();
 			byte[] message = Encoding.UTF8.GetBytes("This message will be encrypted here and decrypted by other side");
 
-			byte[] result = AES256.Decrypt(AES256.Encrypt(message, key, iv), key, iv);
+			byte[] result = new Aes(256).Decrypt(new Aes(256).Encrypt(message, key, iv), key, iv);
 
-			Assert.AreEqual(Encoding.UTF8.GetString(message), Encoding.UTF8.GetString(result));
+			Assert.Equal(Encoding.UTF8.GetString(message), Encoding.UTF8.GetString(result));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void InsertBytesAtIndex()
 		{
 			byte[] source = { 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F };
@@ -47,16 +45,16 @@ namespace IonLibTests
 
 			byte[] result = Protocol.InsertBytesAtIndex(index, insert, source);
 
-			Assert.IsTrue(source.Length < result.Length && (result.Length - source.Length) == index);
+			Assert.True(source.Length < result.Length && (result.Length - source.Length) == index);
 
 			for (int i = 0; i < validResult.Length; i++)
 			{
-				Console.WriteLine($"Assert.AreEqual({result[i]}, {validResult[i]});");
-				Assert.AreEqual(result[i], validResult[i]);
+				//Console.WriteLine($"Assert.AreEqual({result[i]}, {validResult[i]});");
+				Assert.Equal(result[i], validResult[i]);
 			}
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ReadBytesAtIndex()
 		{
 			byte[] source = { 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F };
@@ -66,24 +64,24 @@ namespace IonLibTests
 
 			byte[] result = Protocol.ReadBytesAtIndex(index, length, source);
 
-			Assert.AreEqual(validResult.Length, result.Length);
+			Assert.Equal(validResult.Length, result.Length);
 
-			Console.WriteLine($"validResult: {BitConverter.ToString(validResult).Replace("-", "")}");
-			Console.WriteLine($"result: {BitConverter.ToString(result).Replace("-", "")}");
+			//Console.WriteLine($"validResult: {BitConverter.ToString(validResult).Replace("-", "")}");
+			//Console.WriteLine($"result: {BitConverter.ToString(result).Replace("-", "")}");
 
 			for (int i = 0; i < length; i++)
 			{
-				Console.WriteLine($"AreEqual({result[i]}, {validResult[i]});");
-				Assert.AreEqual(result[i], validResult[i]);
+				//Console.WriteLine($"AreEqual({result[i]}, {validResult[i]});");
+				Assert.Equal(result[i], validResult[i]);
 			}
 		}
 
-		[TestMethod]
+		[Fact]
 		public void GeneratorIV()
 		{
 			string num1 = Generator.NextIVForAES();
 
-			Assert.IsTrue(num1.Length == 16);
+			Assert.True(num1.Length == 16);
 		}
 	}
 }

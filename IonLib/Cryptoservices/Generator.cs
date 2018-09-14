@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IonLib.cryptoservices
+namespace IonLib.Cryptoservices
 {
 	public static class Generator
 	{

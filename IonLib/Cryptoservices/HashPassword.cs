@@ -20,7 +20,7 @@ namespace IonLib.cryptoservices
 		/// <returns>The hash of the password.</returns>
 		public static string CreateHash(string password)
 		{
-			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+			var rng = new RNGCryptoServiceProvider();
 			byte[] salt = new byte[SaltByteSize];
 			rng.GetBytes(salt);
 
@@ -75,7 +75,10 @@ namespace IonLib.cryptoservices
 		/// <returns>A hash of the password.</returns>
 		static byte[] PBKDF2(string password, byte[] salt, int iterations, int outputBytes)
 		{
-			Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, salt) { IterationCount = iterations };
+			var pbkdf2 = new Rfc2898DeriveBytes(password, salt)
+			{
+				IterationCount = iterations
+			};
 
 			return pbkdf2.GetBytes(outputBytes);
 		}

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace IonLib.cryptoservices
+namespace IonLib.Cryptoservices
 {
-	public class CRC32Operation
+	public class Crc32Operation
 	{
 		protected static UInt32[] CRCTable = null;
 		protected static UInt32 Polynomial = 0xEDB88320;
@@ -30,6 +30,7 @@ namespace IonLib.cryptoservices
 						crc = crc >> 1;
 					}
 				}
+
 				CRCTable[i] = crc;
 			}
 		}
@@ -46,19 +47,20 @@ namespace IonLib.cryptoservices
 
 		public static UInt32 ComputeCRC32(byte[] data, int offset = 0)
 		{
-			if (CRCTable == null)
-			{
+			if (CRCTable is null)
 				CRC32Init();
-			}
 
 			int count = data.Length;
 			UInt32 crc = 0xffffffff;
 			int i;
+
 			for (i = offset; i < count; i++)
 			{
 				crc = CRC32Update(crc, data[i]);
 			}
+
 			crc ^= 0xffffffff;
+
 			return crc;
 		}
 		public static UInt32 ComputeCRC32Old(byte[] data, int offset = 0)
@@ -122,10 +124,12 @@ namespace IonLib.cryptoservices
 
 			uint c = 0xffffffff; // begin at shift register contents 
 			int i, n = data.Length;
+
 			for (i = offset; i < n; i++)
 			{
 				c = crctab[((int)c ^ data[i]) & 0xFF] ^ (c >> 8);
 			}
+
 			return c ^ 0xffffffff;
 		}
 		public static UInt16 ComputeCRC16IBM(byte[] data)
@@ -172,6 +176,7 @@ namespace IonLib.cryptoservices
 
 			UInt16 crc = 65535;
 			UInt16 x;
+			
 			for (UInt16 i = 0; i < length; i++)
 			{
 				x = (UInt16)(crc ^ data[i]);

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IonLib.network
+namespace IonLib.Network
 {
 	public class ByteQueue
 	{
@@ -28,7 +28,7 @@ namespace IonLib.network
 		{
 			if (!alwaysNewBuffer)
 			{
-				if (BaseBuffer == null || BaseBuffer.Length < capacity)
+				if (BaseBuffer is null || BaseBuffer.Length < capacity)
 				{
 					BaseBuffer = new byte[capacity];
 				}
@@ -60,10 +60,11 @@ namespace IonLib.network
 		public byte[] GetPacketData()
 		{
 			if (Length >= 1)
-			{
-
-				return new[] { BaseBuffer[Head], BaseBuffer[1] };
-			}
+				return new[]
+				{
+					BaseBuffer[Head],
+					BaseBuffer[1]
+				};
 
 			return new byte[] { 0x46 }; //70
 		}
@@ -94,9 +95,11 @@ namespace IonLib.network
 
 		public int Dequeue(byte[] buffer, int offset, int size)
 		{
-			if (size > Length) size = Length;
+			if (size > Length)
+				size = Length;
 
-			if (size == 0) return 0;
+			if (size == 0)
+				return 0;
 
 			if (Head < Tail)
 			{
@@ -120,7 +123,8 @@ namespace IonLib.network
 			Head = (Head + size) % BaseBuffer.Length;
 			Length -= size;
 
-			if (Length != 0) return size;
+			if (Length != 0)
+				return size;
 
 			Head = 0;
 			Tail = 0;
@@ -130,7 +134,8 @@ namespace IonLib.network
 
 		public void Enqueue(byte[] buffer, int offset, int size)
 		{
-			if ((Length + size) > BaseBuffer.Length) SetCapacity((Length + size + 2047) & ~2047, true);
+			if ((Length + size) > BaseBuffer.Length)
+				SetCapacity((Length + size + 2047) & ~2047, true);
 
 			if (Head < Tail)
 			{

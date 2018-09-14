@@ -2,13 +2,15 @@
 using System.Net.Sockets;
 using System.Text;
 
-namespace IonLib.network
+namespace IonLib.Network
 {
 	public static class NetworkExtensions
 	{
 		public static int SendString(this Socket socket, string str, Encoding encoding, bool addNewlineChar = true)
 		{
-			if (addNewlineChar) str += "\n";
+			if (addNewlineChar)
+				str += "\n";
+				
 			byte[] buffer = encoding.GetBytes(str);
 
 			return socket.Send(buffer, buffer.Length, SocketFlags.None);

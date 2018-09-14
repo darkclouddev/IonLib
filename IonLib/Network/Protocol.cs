@@ -2,16 +2,17 @@
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using IonLib.cryptoservices;
 
-namespace IonLib.network
+using IonLib.Cryptoservices;
+
+namespace IonLib.Network
 {
 	/// <summary>
 	/// Protocol container class. Provides methods for packet processing, receiving and sending.
 	/// </summary>
 	public static class Protocol
 	{
-		public const uint Version = 1;
+		public const uint Version = 2;
 		public const string EmptyIV = "0000000000000000";
 
 		/* Process description:
@@ -27,7 +28,7 @@ namespace IonLib.network
 
 			packetBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(packetBytes.Length), packetBytes); //+size
 			packetBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(packetType), packetBytes); //+type
-			packetBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(CRC32Operation.ComputeCRC32(packetBytes)), packetBytes); //+crc
+			packetBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(Crc32Operation.ComputeCRC32(packetBytes)), packetBytes); //+crc
 			packetBytes = InsertBytesAtIndex(0, Encoding.ASCII.GetBytes(EmptyIV), packetBytes); //+empty iv
 
 			return packetBytes;
@@ -48,8 +49,8 @@ namespace IonLib.network
 
 			finalBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(finalBytes.Length), finalBytes); //+size
 			finalBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(packetType), finalBytes); //+type
-			finalBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(CRC32Operation.ComputeCRC32(finalBytes)), finalBytes); //+crc
-			finalBytes = AES256.Encrypt(finalBytes, key, iv); //+enc
+			finalBytes = InsertBytesAtIndex(0, BitConverter.GetBytes(Crc32Operation.ComputeCRC32(finalBytes)), finalBytes); //+crc
+			finalBytes = new Aes(256).Encrypt(finalBytes, key, iv); //+enc
 
 			#if DEBUG
 			Console.WriteLine($"Encrypted data: {BitConverter.ToString(finalBytes)}");
@@ -76,7 +77,7 @@ namespace IonLib.network
 				offset += part.Length;
 			}
 
-			return crc == CRC32Operation.ComputeCRC32(total);
+			return crc == Crc32Operation.ComputeCRC32(total);
 		}
 
 		public static byte[] InsertBytesAtIndex(int index, byte[] insert, byte[] data)

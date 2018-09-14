@@ -6,15 +6,15 @@ using System.Text;
 
 namespace IonLib.cryptoservices
 {
-	public static class MD5Operation
+	public static class Md5Operation
 	{
 		public static string GetMD5(string input, bool isFile = false)
 		{
 			if (!isFile)
 			{
-				UTF8Encoding encoding = new UTF8Encoding();
+				var encoding = new UTF8Encoding();
 				byte[] bytes = encoding.GetBytes(input);
-				MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+				var md5 = new MD5CryptoServiceProvider();
 				byte[] hashBytes = md5.ComputeHash(bytes);
 				string hashString = hashBytes.Aggregate(string.Empty, (current, t) => current + Convert.ToString(t, 16).PadLeft(2, '0'));
 
@@ -23,10 +23,10 @@ namespace IonLib.cryptoservices
 
 			try
 			{
-				FileStream file = new FileStream(input, FileMode.Open);
+				var file = new FileStream(input, FileMode.Open);
 				byte[] retVal = new MD5CryptoServiceProvider().ComputeHash(file);
 				file.Close();
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 
 				for (int i = 0; i < retVal.Length; i++)
 				{
